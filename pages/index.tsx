@@ -1,6 +1,6 @@
 import Head from 'next/head'
-import Link from 'next/link'
-import MainMenuComponent from "../components/MainMenuComponent";
+import MainMenu from "../Components/MainMenu";
+import { Username } from "../Components/Input";
 
 export default function Home<NextPage>() {
     return (
@@ -10,8 +10,8 @@ export default function Home<NextPage>() {
                 <link rel="icon" href="/favicon.ico"/>
             </Head>
 
-            <MainMenuComponent/>
-
+            <MainMenu/>
+            <Username/>
         </div>
     )
 }

@@ -1,6 +1,5 @@
 import Head from 'next/head'
-import Link from 'next/link'
-import ChatComponent from "../components/ChatComponent";
+import Chat from "../Components/Chat";
 
 export default function Messages<NextPage>() {
     return (
@@ -10,7 +9,7 @@ export default function Messages<NextPage>() {
                 <link rel="icon" href="/favicon.ico"/>
             </Head>
 
-            <ChatComponent/>
+            <Chat/>
         </div>
     )
 }

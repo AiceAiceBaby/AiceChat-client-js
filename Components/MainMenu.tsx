@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 
-export default function MainMenuComponent<NextPage>() {
+export default function MainMenu<NextPage>() {
     return (<div className="msger-container">
         <div className="msger">
             <header className="msger-header">

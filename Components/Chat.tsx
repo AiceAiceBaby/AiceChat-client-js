@@ -12,7 +12,7 @@ interface IMessage {
   author: String
 }
 
-export default function ChatComponent<NextPage>() {
+export default function Chat<NextPage>() {
   let inputBox: HTMLInputElement|null = null;
   let messageEnd: HTMLDivElement|null = null;
 
