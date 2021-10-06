@@ -7,6 +7,18 @@
   --right-msg-bg: #53759b;
 }
 
+.msger-input-vertical {
+  @extend .msger-inputarea;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 5px;
+
+  .msger-send-btn {
+    margin: 1.25rem 0;
+    width: 100%;
+  }
+}
+
 .msger-menu-btn {
   @extend .msger-send-btn;
   padding: 10px;

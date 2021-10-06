@@ -6,6 +6,7 @@ import React, {
   useState
 } from 'react';
 import Link from "next/link";
+import {isTextIsEmpty} from "../Utils";
 
 interface IMessage {
   data: String,
@@ -22,7 +23,7 @@ export default function Chat<NextPage>() {
     {data: "Message2", author: "me"},
     {data: "Message3", author: "me"}
   ]);
-  const messageTextIsEmpty = messageText.trim().length === 0;
+
 
   const sendChatMessage = (messageText: IMessage) => {
     setMessageText("");
@@ -37,7 +38,7 @@ export default function Chat<NextPage>() {
   }
 
   const handleKeyPress: KeyboardEventHandler<HTMLInputElement> = (event) => {
-    if (event.charCode !== 13 || messageTextIsEmpty) {
+    if (event.charCode !== 13 || isTextIsEmpty(messageText)) {
       return;
     }
     event.preventDefault();
@@ -97,7 +98,7 @@ export default function Chat<NextPage>() {
                 className="msger-input"
                 placeholder="Enter your message..."/>
             <button type="submit" className="msger-send-btn"
-                    disabled={messageTextIsEmpty}>Send
+                    disabled={isTextIsEmpty(messageText)}>Send
             </button>
           </form>
         </div>

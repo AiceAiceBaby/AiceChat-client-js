@@ -1,6 +1,5 @@
 import Head from 'next/head'
 import MainMenu from "../Components/MainMenu";
-import { Username } from "../Components/Input";
 
 export default function Home<NextPage>() {
     return (
@@ -11,7 +10,6 @@ export default function Home<NextPage>() {
             </Head>
 
             <MainMenu/>
-            <Username/>
         </div>
     )
 }
