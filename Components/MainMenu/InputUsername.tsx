@@ -32,10 +32,10 @@ export default function InputUsername<NextPage>({isHosting, isJoining, setShowWa
                        className="msger-input"
                        value={username as string}
                         // @ts-ignore
-                       onChange={e => setUsername(e.target.value)}/>
+                       onChange={e => setUsername(e.target.value)}
+                        required/>
                 <button type="submit"
-                        className="msger-send-btn"
-                        disabled={isTextIsEmpty(username as string)}>Next
+                        className="msger-send-btn">Next
                 </button>
             </form>
         </div>

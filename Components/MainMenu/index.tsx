@@ -4,6 +4,7 @@ import InputUsername from "./InputUsername";
 import InputRoomId from "./InputRoomId";
 import {StoreContext} from "../../pages/_app";
 import Waiting from "./Waiting";
+import Link from "next/link";
 
 export default function MainMenu<NextPage>() {
     const [isHosting, setIsHosting] = useState(false);
@@ -13,11 +14,25 @@ export default function MainMenu<NextPage>() {
     const [showRoomIdInput, setShowRoomIdInput] = useState(false);
     // const { username: [username, setUsername] } = useContext(StoreContext);
 
+    const backToMainMenu = () => {
+        setIsHosting(false);
+        setIsJoining(false);
+        setShowWaiting(false);
+        setShowUsernameInput(false);
+        setShowRoomIdInput(false);
+    }
+
+    const BackButton = (
+        <div className="msger-header-left title">
+            <a href="#" className="link" onClick={backToMainMenu}>⬅</a>
+        ️</div>
+    );
+
     return (
         <div className="msger-container">
             <div className="msger">
                 <header className="msger-header">
-                    <div/>
+                    { (showUsernameInput || showRoomIdInput || showWaiting) ? BackButton : <div/>}
                     <div className="msger-header-left title">Main Menu</div>
                     <div/>
                 </header>

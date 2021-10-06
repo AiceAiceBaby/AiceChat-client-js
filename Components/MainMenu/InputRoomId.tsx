@@ -19,10 +19,10 @@ export default function InputRoomId<NextPage>() {
                        className="msger-input"
                        value={roomId as string}
                        // @ts-ignore
-                       onChange={e => setRoomId(e.target.value)}/>
+                       onChange={e => setRoomId(e.target.value)}
+                       required/>
                 <button type="submit"
-                        className="msger-send-btn"
-                        disabled={isTextIsEmpty(roomId as string)}>Join
+                        className="msger-send-btn">Join
                 </button>
             </form>
         </div>
