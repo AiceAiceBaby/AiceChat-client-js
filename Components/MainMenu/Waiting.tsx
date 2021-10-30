@@ -25,6 +25,7 @@ export default function Waiting<NextPage>({ setShowWaiting }: {setShowWaiting: F
         .catch(handleAPIError);
 
         const checkIfSomeoneJoined = setInterval(() => {
+            if (!id) return;
             AiceChatServer.roomGet(id)
             .then(({data}) => {
                 console.log('data.room.users', data.room.users)
