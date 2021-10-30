@@ -79,6 +79,7 @@ export default function Chat<NextPage>() {
 
     return () => {
       clearInterval(updateMessages);
+      AiceChatServer.messageSend(roomId, username, terminateKeyword);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
