@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Menu from "./Menu";
 import InputUsername from "./InputUsername";
 import InputRoomId from "./InputRoomId";
@@ -6,13 +6,15 @@ import {StoreContext} from "../../pages/_app";
 import Waiting from "./Waiting";
 import Link from "next/link";
 
-export default function MainMenu<NextPage>() {
+export default function MainMenu<NextPage>({ directJoin = false}) {
     const [isHosting, setIsHosting] = useState(false);
     const [isJoining, setIsJoining] = useState(false);
     const [showWaiting, setShowWaiting] = useState(false);
     const [showUsernameInput, setShowUsernameInput] = useState(false);
     const [showRoomIdInput, setShowRoomIdInput] = useState(false);
-    // const { username: [username, setUsername] } = useContext(StoreContext);
+    const {
+        roomId: [roomId, _],
+    } = useContext(StoreContext);
 
     const backToMainMenu = () => {
         setIsHosting(false);
@@ -27,6 +29,14 @@ export default function MainMenu<NextPage>() {
             <a href="#" className="link" onClick={backToMainMenu}>⬅</a>
         ️</div>
     );
+
+    useEffect(() => {
+        if (directJoin) {
+            setIsJoining(true);
+            setShowUsernameInput(true);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     return (
         <div className="msger-container">
