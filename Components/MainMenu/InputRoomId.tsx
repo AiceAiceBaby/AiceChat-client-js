@@ -1,14 +1,22 @@
 import React, {FormEventHandler, useContext} from "react";
 import Router from 'next/router'
-import {isTextIsEmpty} from "../../Utils";
+import {handleAPIError, isTextIsEmpty} from "../../Utils";
 import {StoreContext} from "../../pages/_app";
+import AiceChatServer from "../../API/AiceChatServer";
 
 export default function InputRoomId<NextPage>() {
-    const { roomId: [roomId, setRoomId] } = useContext(StoreContext);
+    const {
+        roomId: [roomId, setRoomId],
+        username: [username, _]
+    } = useContext(StoreContext);
 
     const handleFormSubmission: FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
-        Router.push('/messages');
+        AiceChatServer.roomJoin(roomId, username)
+        .then(({data}) => {
+            Router.push('/messages');
+        })
+        .catch(handleAPIError);
     }
 
     return (

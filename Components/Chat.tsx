@@ -2,68 +2,97 @@ import React, {
   Dispatch,
   FormEventHandler,
   KeyboardEventHandler,
+  useContext,
   useEffect,
+  useRef,
   useState
 } from 'react';
 import Link from "next/link";
-import {isTextIsEmpty} from "../Utils";
+import {handleAPIError, isTextIsEmpty} from "../Utils";
+import { StoreContext } from '../pages/_app';
+import AiceChatServer from '../API/AiceChatServer';
 
 interface IMessage {
-  data: String,
-  author: String
+  msg: String,
+  author: String,
+  timeStamp: Date
 }
 
 export default function Chat<NextPage>() {
-  let inputBox: HTMLInputElement|null = null;
-  let messageEnd: HTMLDivElement|null = null;
+  let inputBox = useRef(null);
+  let messageEnd = useRef(null);
 
   const [messageText, setMessageText] = useState("");
   const [receivedMessages, setMessages]: [Array<IMessage>, Dispatch<any>] = useState([
-    {data: "Message1", author: "doggo"},
-    {data: "Message2", author: "me"},
-    {data: "Message3", author: "me"}
+    // { msg: "Message1", author: "doggo", timeStamp: new Date()},
   ]);
 
+  const {
+      roomId: [roomId, _],
+      username: [username, __]
+  } = useContext(StoreContext);
 
-  const sendChatMessage = (messageText: IMessage) => {
+/*   const sendChatMessage = (messageText: IMessage) => {
     setMessageText("");
     inputBox!.focus();
     const history = receivedMessages.slice(-199);
     setMessages([...history, messageText]);
-  }
+  } */
 
   const handleFormSubmission: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
-    sendChatMessage({data: messageText, author: "me"});
+    AiceChatServer
+    .messageSend(roomId, username, messageText)
+    .then((_) => {
+      setMessageText("");
+      // inputBox!.focus();
+    })
+    .catch(handleAPIError);
+    // sendChatMessage({ msg: messageText, author: username});
   }
 
   const handleKeyPress: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (event.charCode !== 13 || isTextIsEmpty(messageText)) {
       return;
     }
-    event.preventDefault();
-    sendChatMessage({data: messageText, author: "me"});
   }
 
-  const messages = receivedMessages.map(({data, author}, index) => {
-    // return <span key={index} data-author={author}>{data}</span>;
-    const currentUsername = 'me';
+  useEffect(() => {
+    const updateMessages = setInterval(() => {
+      AiceChatServer.messageGet(roomId)
+      .then(({data}) => {
+        const newMessages: IMessage[] = data.messages.map((m: any) => ({msg: m.message, author: m.username, timeStamp: new Date(m.timeStamp)}));
+        setMessages(newMessages);
+
+        // auto scroll to last message
+        if (messageEnd?.current) {
+          const curr = messageEnd.current as HTMLDivElement;
+          curr.scrollIntoView({ behavior: "smooth" })
+        }
+      })
+      .catch(handleAPIError);
+    }, 1000);
+
+    return () => {
+      clearInterval(updateMessages);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const messages = receivedMessages.map(({ msg, author, timeStamp}, index) => {
+    // return <span key={index}  data-author={author}>{data}</span>;
     return (
-        <div className={`msg ${author === currentUsername ? 'right' : 'left'}-msg`} key={index}>
+        <div className={`msg ${author === username ? 'right' : 'left'}-msg`} key={index}>
           <div className="msg-bubble">
             <div className="msg-info">
               <div className="msg-info-name">{author}</div>
-              <div className="msg-info-time">12:45</div>
+              <div className="msg-info-time">{timeStamp.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</div>
             </div>
 
-            <div className="msg-text">{data}</div>
+            <div className="msg-text">{msg}</div>
           </div>
         </div>
     );
-  });
-
-  useEffect(() => {
-    messageEnd!.scrollIntoView({ behavior: "smooth" });
   });
 
   return (
@@ -81,16 +110,12 @@ export default function Chat<NextPage>() {
 
           <main className="msger-chat">
             {messages}
-            <div ref={(element) => {
-              messageEnd = element;
-            }}/>
+            <div ref={messageEnd}/>
           </main>
 
           <form onSubmit={handleFormSubmission} className="msger-inputarea">
             <input
-                ref={(element) => {
-                  inputBox = element;
-                }}
+                ref={inputBox}
                 value={messageText}
                 onChange={e => setMessageText(e.target.value)}
                 onKeyPress={handleKeyPress}

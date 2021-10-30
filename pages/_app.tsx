@@ -6,12 +6,14 @@ import {
 } from "react";
 
 interface IStoreContext {
-  username: (string | Dispatch<SetStateAction<string>>)[],
-  roomId: (string | Dispatch<SetStateAction<string>>)[]
+  username: [string, Dispatch<SetStateAction<string>>],
+  roomId: [string, Dispatch<SetStateAction<string>>]
 }
 
 export const StoreContext = createContext<IStoreContext>({
+  // @ts-ignore
   username: [],
+  // @ts-ignore
   roomId: []
 });
 
@@ -25,6 +27,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }
 
   return (
+    // @ts-ignore
       <StoreContext.Provider value={store}>
         <Component {...pageProps} />
       </StoreContext.Provider>

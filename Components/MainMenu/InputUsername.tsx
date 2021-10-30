@@ -19,8 +19,11 @@ export default function InputUsername<NextPage>({isHosting, isJoining, setShowWa
     const handleFormSubmission: FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
         setShowUsernameInput(false);
-        if (isHosting) setShowWaiting(true);
-        else if (isJoining) setShowRoomIdInput(true);
+        if (isHosting) {
+            setShowWaiting(true);
+        } else if (isJoining) {
+            setShowRoomIdInput(true);
+        }
     }
 
     return (
