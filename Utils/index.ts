@@ -8,5 +8,6 @@ const handleAPIError = (err: any) => {
     else alert('something went wrong: ' + err.message);
     console.log(err?.response?.data)
 };
+const terminateKeyword = '--GOODBYE--';
 
-export { isTextIsEmpty, getACSApiUrl, handleAPIError }
+export { terminateKeyword, isTextIsEmpty, getACSApiUrl, handleAPIError }

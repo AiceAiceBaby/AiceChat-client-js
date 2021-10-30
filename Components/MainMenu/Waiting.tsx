@@ -45,9 +45,11 @@ export default function Waiting<NextPage>({ setShowWaiting }: {setShowWaiting: F
 
     return (
         <div>
-            <h2>Link: <a href={roomLink}>{roomLink}</a></h2>
-            <h2>Room ID: {roomId}</h2>
-            <h1>Waiting For Someone to Join...</h1>
+            <h1>Send the link to someone.</h1>
+            <hr />
+            <h3>Link: <a href={roomLink}>{roomLink}</a></h3>
+            <h3>Room ID: {roomId}</h3>
+            <h3>Waiting For Someone to Join...</h3>
         </div>
     )
 }

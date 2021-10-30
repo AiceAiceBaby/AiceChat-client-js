@@ -8,7 +8,7 @@ import React, {
   useState
 } from 'react';
 import Link from "next/link";
-import {handleAPIError, isTextIsEmpty} from "../Utils";
+import {handleAPIError, isTextIsEmpty, terminateKeyword} from "../Utils";
 import { StoreContext } from '../pages/_app';
 import AiceChatServer from '../API/AiceChatServer';
 
@@ -32,13 +32,6 @@ export default function Chat<NextPage>() {
       username: [username, __]
   } = useContext(StoreContext);
 
-/*   const sendChatMessage = (messageText: IMessage) => {
-    setMessageText("");
-    inputBox!.focus();
-    const history = receivedMessages.slice(-199);
-    setMessages([...history, messageText]);
-  } */
-
   const handleFormSubmission: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     AiceChatServer
@@ -58,6 +51,17 @@ export default function Chat<NextPage>() {
   }
 
   useEffect(() => {
+    window.onbeforeunload = (event) => {
+      AiceChatServer.messageSend(roomId, username, terminateKeyword);
+      const e = event || window.event;
+      // Cancel the event
+      e.preventDefault();
+      if (e) {
+        e.returnValue = ''; // Legacy method for cross browser support
+      }
+      return ''; // Legacy method for cross browser support
+    };
+
     const updateMessages = setInterval(() => {
       AiceChatServer.messageGet(roomId)
       .then(({data}) => {
@@ -80,7 +84,12 @@ export default function Chat<NextPage>() {
   }, []);
 
   const messages = receivedMessages.map(({ msg, author, timeStamp}, index) => {
-    // return <span key={index}  data-author={author}>{data}</span>;
+    // show leave warning ONLY to other user
+    if (msg === terminateKeyword) {
+      if (author === username) return <></>;
+      return (<div style={{textAlign: 'center'}}><p>{author} possibly left the site.</p></div>)
+    }
+    // show normal message
     return (
         <div className={`msg ${author === username ? 'right' : 'left'}-msg`} key={index}>
           <div className="msg-bubble">
