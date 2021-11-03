@@ -88,7 +88,7 @@ export default function Chat<NextPage>() {
     // show leave warning ONLY to other user
     if (msg === terminateKeyword) {
       if (author === username) return <></>;
-      return (<div style={{textAlign: 'center'}}><p>{author} possibly left the site.</p></div>)
+      return (<div style={{textAlign: 'center'}}><p>{author} possibly left the conversation.</p></div>)
     }
     // show normal message
     return (
