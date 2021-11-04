@@ -69,6 +69,7 @@
   border-bottom: var(--border);
   background: #232b2b;
   color: #eee;
+  width: 100%;
 }
 
 .title {
@@ -179,4 +180,8 @@
 
 .msger-chat {
   background-color: #3b3b3b;
+}
+
+.msg-text {
+  word-break: break-all;
 }

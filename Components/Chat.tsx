@@ -8,18 +8,18 @@ import React, {
   useState
 } from 'react';
 import Link from "next/link";
-import {handleAPIError, isTextIsEmpty, terminateKeyword} from "../Utils";
+import {encryptedKeyword, handleAPIError, isTextIsEmpty, rsaDecrypt, rsaEncrypt, terminateKeyword} from "../Utils";
 import { StoreContext } from '../pages/_app';
 import AiceChatServer from '../API/AiceChatServer';
 
 interface IMessage {
-  msg: String,
-  author: String,
+  msg: string,
+  author: string,
   timeStamp: Date
 }
 
 export default function Chat<NextPage>() {
-  let inputBox = useRef(null);
+  let inputBox: React.RefObject<HTMLInputElement> = useRef(null);
   let messageEnd = useRef(null);
 
   const [messageText, setMessageText] = useState("");
@@ -29,19 +29,39 @@ export default function Chat<NextPage>() {
 
   const {
       roomId: [roomId, _],
-      username: [username, __]
+      username: [username, __],
+      selfPrivateKey: [selfPrivateKey, ___],
+      otherPublicKey: [otherPublicKey, ____]
   } = useContext(StoreContext);
 
-  const handleFormSubmission: FormEventHandler<HTMLFormElement> = (event) => {
+  const handleSend: FormEventHandler<HTMLButtonElement> = (event) => {
     event.preventDefault();
     AiceChatServer
     .messageSend(roomId, username, messageText)
     .then((_) => {
       setMessageText("");
-      // inputBox!.focus();
+      inputBox?.current?.focus();
     })
     .catch(handleAPIError);
-    // sendChatMessage({ msg: messageText, author: username});
+  }
+
+  const handleSendEncrypted: FormEventHandler<HTMLButtonElement> = (event) => {
+    event.preventDefault();
+
+    try {
+      const encryptedMessageText = encryptedKeyword + rsaEncrypt(otherPublicKey, messageText);
+      AiceChatServer
+      .messageSend(roomId, username, encryptedMessageText)
+      .then((_) => {
+        setMessageText("");
+        inputBox?.current?.focus();
+      })
+      .catch(handleAPIError);
+    } catch (e) {
+      alert("There was error while using the given public key.")
+    }
+
+
   }
 
   const handleKeyPress: KeyboardEventHandler<HTMLInputElement> = (event) => {
@@ -65,14 +85,21 @@ export default function Chat<NextPage>() {
     const updateMessages = setInterval(() => {
       AiceChatServer.messageGet(roomId)
       .then(({data}) => {
-        const newMessages: IMessage[] = data.messages.map((m: any) => ({msg: m.message, author: m.username, timeStamp: new Date(m.timeStamp)}));
-        setMessages(newMessages);
+        const newMessages: IMessage[] = data.messages.map((m: any) => {
+          let msg = m.message as string;
+          if ((msg).startsWith(encryptedKeyword)) {
+            const encryptedMsg = msg.split(encryptedKeyword)[1];
+            msg = rsaDecrypt(selfPrivateKey, encryptedMsg);
+          }
 
-        // auto scroll to last message
+          return {msg, author: m.username, timeStamp: new Date(m.timeStamp)};
+        });
+        // auto scroll to last message only if there's a new message
         if (messageEnd?.current) {
           const curr = messageEnd.current as HTMLDivElement;
           curr.scrollIntoView({ behavior: "smooth" })
         }
+        setMessages(newMessages);
       })
       .catch(handleAPIError);
     }, 1000);
@@ -115,7 +142,11 @@ export default function Chat<NextPage>() {
               </Link>
             ️</div>
             <div className="msger-header-left title">Aice Chat</div>
-            <div/>
+            <div className="msger-header-left title">
+              <Link href="/settings">
+                <a>settings</a>
+              </Link>
+            ️</div>
           </header>
 
           <main className="msger-chat">
@@ -123,17 +154,23 @@ export default function Chat<NextPage>() {
             <div ref={messageEnd}/>
           </main>
 
-          <form onSubmit={handleFormSubmission} className="msger-inputarea">
-            <input
-                ref={inputBox}
-                value={messageText}
-                onChange={e => setMessageText(e.target.value)}
-                onKeyPress={handleKeyPress}
-                type="text"
-                className="msger-input"
-                placeholder="Enter your message..."/>
-            <button type="submit" className="msger-send-btn"
+          <form className="msger-inputarea">
+            <input ref={inputBox}
+                  value={messageText}
+                  onChange={e => setMessageText(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  type="text"
+                  className="msger-input"
+                  placeholder="Enter your message..."/>
+            <button type="submit"
+                    className="msger-send-btn"
+                    onClick={handleSend}
                     disabled={isTextIsEmpty(messageText)}>Send
+            </button>
+            <button type="submit"
+                    className="msger-send-btn"
+                    onClick={handleSendEncrypted}
+                    disabled={isTextIsEmpty(messageText)}>Send (Encrypted)
             </button>
           </form>
         </div>

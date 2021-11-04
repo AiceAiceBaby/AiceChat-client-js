@@ -10,13 +10,14 @@
   },
   "dependencies": {
     "axios": "^0.24.0",
-    "encrypt-rsa": "^1.1.0",
     "next": "11.1.2",
+    "node-rsa": "^1.1.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "sass": "^1.42.1"
   },
   "devDependencies": {
+    "@types/node-rsa": "^1.1.1",
     "@types/react": "17.0.27",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2",

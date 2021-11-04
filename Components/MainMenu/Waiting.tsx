@@ -28,12 +28,12 @@ export default function Waiting<NextPage>({ setShowWaiting }: {setShowWaiting: F
             if (!id) return;
             AiceChatServer.roomGet(id)
             .then(({data}) => {
-                console.log('data.room.users', data.room.users)
+                // console.log('data.room.users', data.room.users)
                 if (data.room.users.length > 1) Router.push('/messages');
             })
             .catch((err) => {
                 alert('something went wrong: ' + err.message);
-                console.log(err.response.data)
+                // console.log(err.response.data)
             });
         }, 1000);
 
