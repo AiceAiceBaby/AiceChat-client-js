@@ -87,7 +87,7 @@ export default function Chat<NextPage>() {
       .then(({data}) => {
         const newMessages: IMessage[] = data.messages.map((m: any) => {
           let msg = m.message as string;
-          if ((msg).startsWith(encryptedKeyword)) {
+          if ((msg).startsWith(encryptedKeyword) && m.username !== username) {
             const encryptedMsg = msg.split(encryptedKeyword)[1];
             msg = rsaDecrypt(selfPrivateKey, encryptedMsg);
           }
