@@ -26,8 +26,8 @@ export const StoreContext = createContext<IStoreContext>({
 export default function MyApp({ Component, pageProps }: AppProps) {
   const [username, setUsername] = useState("");
   const [roomId, setRoomId] = useState("");
-  const [selfPrivateKey, setSelfPrivateKey] = useState(JSON.parse(process.env.NEXT_PUBLIC_RSA_PRIVATE_KEY as string).privateKey);
-  const [otherPublicKey, setOtherPublicKey] = useState(JSON.parse(process.env.NEXT_PUBLIC_RSA_PUBLIC_KEY as string).publicKey);
+  const [selfPrivateKey, setSelfPrivateKey] = useState(JSON.parse(process.env?.NEXT_PUBLIC_RSA_PRIVATE_KEY as string)?.privateKey || '');
+  const [otherPublicKey, setOtherPublicKey] = useState(JSON.parse(process.env?.NEXT_PUBLIC_RSA_PUBLIC_KEY as string)?.publicKey || '');
 
   const store = {
     username: [username, setUsername],
